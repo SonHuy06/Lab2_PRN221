@@ -1,0 +1,233 @@
+﻿@page "/Products/List"
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@addTagHelper *, LazZiya.TagHelpers
+@using Lab2.DataAccess.Models
+@model Lab2.Pages.Products.ListModel
+@{
+}
+
+<html>
+
+<head>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+
+</head>
+
+
+
+
+
+
+<section class="container-fluid mx-2">
+
+    <div class="row d-flex">
+
+        <div class="col-3">
+
+            <div class="row d-flex flex-column">
+
+                <div class="col my-2">
+
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Category
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (Product p in Model.productsGroupByCateID)
+                            {
+                                <li><a class="dropdown-item" asp-page="/Products/List" asp-route-cateID="@p.CategoryId">@p.Category.CategoryName</a></li>
+                                
+                            }
+                            
+                        </ul>
+                    </div>
+
+                    
+
+
+                </div>
+
+                <div class="col my-2">
+
+
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Supplier
+                        </button>
+                        <ul class="dropdown-menu">
+                            @foreach (Product p in Model.productsGroupBySupID)
+                            {
+                                <li><a class="dropdown-item" asp-page="/Products/List" asp-route-supID="@p.SupplierId">@p.Supplier.CompanyName</a></li>
+
+                            }
+
+                        </ul>
+                    </div>
+
+                </div>
+
+                <div class="col my-2">
+
+                    <label for="customRange3" class="form-label">Price</label>
+                    <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">
+                </div>
+
+                <div class="col my-2">
+
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter" aria-label="Recipient's username" aria-describedby="button-addon2">
+                        <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-9 container-fluid">
+
+            <div class="row">
+                @foreach (Product p in Model.allProducts)
+                {
+                    if (p.CategoryId == Model.CateID)
+                    {
+                        <p>Category: @p.Category.CategoryName</p>
+                        break;
+                    }
+                }
+            </div>
+
+            <div class="row">
+                @foreach (Product p in Model.allProducts)
+                {
+                    if (p.SupplierId == Model.SupID)
+                    {
+                        <p>Supplier: @p.Supplier.CompanyName</p>
+                        break;
+                    }
+                }
+            </div>
+
+            <div class="row ">
+
+                
+
+                @foreach (Product p in Model.productsPaging)
+                {
+                    <div class="col-3 mb-5 border border-primary rounded-1 mx-2" style="width:305px; height:350px; position:relative">
+
+                        <div class="row d-flex flex-column py-3 ">
+
+                            <div class="col mb-4">
+
+                                <div class="row d-flex">
+
+                                    <div class="col-6">
+                                        Product Name:
+                                    </div>
+
+                                    <div class="col-6">
+                                        @p.ProductName
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col mb-4">
+                                <div class="row d-flex">
+
+                                    <div class="col-6">
+                                        Category:
+                                    </div>
+
+                                    <div class="col-6">
+                                        @((p.Category == null) ? "No info" : p.Category.CategoryName)
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col mb-4">
+                                <div class="row d-flex">
+
+                                    <div class="col-6">
+                                        Price:
+                                    </div>
+
+                                    <div class="col-6">
+                                        @p.UnitPrice
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col mb-5">
+                                <div class="row d-flex">
+
+                                    <div class="col-6">
+                                        Unit in stock:
+                                    </div>
+
+                                    <div class="col-6">
+                                        @p.UnitsInStock
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col pb-2" style="position:absolute; bottom:0">
+
+                                <div class="row d-flex ">
+
+                                    @if (p.UnitsInStock <= 0)
+                                    {
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-primary" disabled>Add to cart</button>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-6">
+                                            <button type="button" class="btn btn-primary">Add to cart</button>
+                                        </div>
+                                    }
+
+                                    <div class="col-4 ">
+
+                                        <a asp-page="/Products/Detail" asp-route-pid="@p.ProductId">
+                                            <input type="submit" class="btn btn-primary" value="Detail" />
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                }
+
+                <div class="col-12">
+
+                    <paging class="pagination" total-records="@Model.totalProducts" show-total-pages="false" show-total-records="true" page-size="@Model.pageSize" page-no="@Model.pageNo">
+
+                    </paging>
+                </div>
+
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+</html>
