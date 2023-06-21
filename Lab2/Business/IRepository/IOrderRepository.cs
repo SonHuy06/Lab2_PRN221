@@ -2,5 +2,6 @@
 {
     public class IOrderRepository
     {
+        public void addOrder();
     }
 }
