@@ -2,6 +2,10 @@
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @addTagHelper *, LazZiya.TagHelpers
 @using Lab2.DataAccess.Models
+@using Lab2.Business.DTO
+@{
+    Layout = null;
+}
 @model Lab2.Pages.Products.ListModel
 @{
 }
@@ -11,6 +15,11 @@
 <head>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Lab2.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
 
@@ -19,15 +28,107 @@
 
 
 
-<section class="container-fluid mx-2">
+<section class="container-fluid mx-2 w-100 ">
+
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 " style="height:60px">
+            <div class="container-fluid">
+
+                <div class="row w-100 mt-3">
+
+                    <div class="col-4">
+
+                        <div class="row pt-1    ">
+                            <a class="navbar-brand col-3" asp-area="" asp-page="">Food Store</a>
+
+                            <div class="nav-item align-items-start col-2 mt-1 ">
+                                <a class="nav-link text-dark " asp-area="" asp-page="/Products/List">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-3"></div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="col-5 ">
+                    </div>
+
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between col-3 align-items-end pt-2">
+                        <ul class="navbar-nav flex-grow-1">
+
+                            <li class="nav-item mr-5" style="text-align:end">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2" id="txtSearch">
+                                    <button class="btn btn-outline-secondary" type="button" id="btnSearch">
+
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                    </button>
+                                </div>
+                            </li>
+
+                            <li class="nav-item mt-1 px-3">
+                                
+                                <a class="nav-link text-dark " asp-area="" asp-page="/Carts/Cart">
+                                    <i class="fa-solid fa-cart-shopping"></i>
+                                </a>
+                            </li>
+
+
+
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </nav>
+    </header>
 
     <div class="row d-flex">
 
-        <div class="col-3">
+        <div class="col-3 mr-5">
 
-            <div class="row d-flex flex-column">
+            <div class="row d-flex flex-column ">
+
 
                 <div class="col my-2">
+                    <select class="form-select" aria-label="Default select example" id="categorySelect" onchange="filterProducts()">
+                        <option selected>Category</option>
+                        @foreach(ProductDTO p in Model.productsGroupByCateID){
+
+                            
+                                <option value="@p.CategoryId" >@p.Category.CategoryName</option>
+                            
+                            
+                        }
+                        
+                       
+                    </select>
+                </div>
+
+                <div class="col my-2">
+                    <select class="form-select" aria-label="Default select example" id="supplierSelect" onchange="filterProducts()">
+                        <option selected>Supplier</option>
+                        @foreach (ProductDTO p in Model.productsGroupBySupID)
+                        {
+
+
+                            <option value="@p.SupplierId">@p.Supplier.CompanyName</option>
+
+
+                        }
+
+
+                    </select>
+                </div>
+
+
+
+               @* <div class="col my-2">
 
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,9 +147,9 @@
                     
 
 
-                </div>
+                </div>*@
 
-                <div class="col my-2">
+                @*<div class="col my-2">
 
 
                     <div class="dropdown">
@@ -65,58 +166,51 @@
                         </ul>
                     </div>
 
-                </div>
+                </div>*@
 
-                <div class="col my-2">
+               
 
-                    <label for="customRange3" class="form-label">Price</label>
-                    <input type="range" class="form-range" min="0" max="5" step="0.5" id="customRange3">
-                </div>
-
-                <div class="col my-2">
+                @*<div class="col my-2">
 
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Enter" aria-label="Recipient's username" aria-describedby="button-addon2">
                         <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
                     </div>
 
-                </div>
+                </div>*@
 
             </div>
 
         </div>
 
-        <div class="col-9 container-fluid">
+        <div class="col-9 container-fluid" style="margin:0 !important">
 
-            <div class="row">
-                @foreach (Product p in Model.allProducts)
-                {
-                    if (p.CategoryId == Model.CateID)
-                    {
-                        <p>Category: @p.Category.CategoryName</p>
-                        break;
-                    }
-                }
-            </div>
+            <div class="row mb-2">
 
-            <div class="row">
-                @foreach (Product p in Model.allProducts)
-                {
-                    if (p.SupplierId == Model.SupID)
-                    {
-                        <p>Supplier: @p.Supplier.CompanyName</p>
-                        break;
-                    }
-                }
+                <div class="col-9">
+
+                </div>
+
+
+                 <div class="col-2" style="width:200px">
+                    <select class="form-select col-2" aria-label="Default select example" id="priceSelect" onchange="filterProducts()">
+                        <option selected>Sort</option>
+                        <option value="asc">Price ascending</option>
+                        <option value="desc">Price descending</option>
+
+
+                    </select>
+                 </div>
             </div>
+           
 
             <div class="row ">
 
-                
-
-                @foreach (Product p in Model.productsPaging)
+                @if(@Model.totalProducts > 0)
                 {
-                    <div class="col-3 mb-5 border border-primary rounded-1 mx-2" style="width:305px; height:350px; position:relative">
+                     @foreach (ProductDTO p in Model.productsPaging)
+                {
+                    <div class="col-3 mb-5 border border-primary rounded-1 mx-2" style="width:308px; height:360px; position:relative">
 
                         <div class="row d-flex flex-column py-3 ">
 
@@ -124,11 +218,11 @@
 
                                 <div class="row d-flex">
 
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         Product Name:
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-7">
                                         @p.ProductName
                                     </div>
 
@@ -138,47 +232,37 @@
                             <div class="col mb-4">
                                 <div class="row d-flex">
 
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         Category:
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-7">
                                         @((p.Category == null) ? "No info" : p.Category.CategoryName)
                                     </div>
 
                                 </div>
                             </div>
+
+                            
                             <div class="col mb-4">
                                 <div class="row d-flex">
 
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         Price:
                                     </div>
 
-                                    <div class="col-6">
+                                    <div class="col-7">
                                         @p.UnitPrice
                                     </div>
 
                                 </div>
                             </div>
-                            <div class="col mb-5">
-                                <div class="row d-flex">
-
-                                    <div class="col-6">
-                                        Unit in stock:
-                                    </div>
-
-                                    <div class="col-6">
-                                        @p.UnitsInStock
-                                    </div>
-
-                                </div>
-                            </div>
+                            
                             <div class="col pb-2" style="position:absolute; bottom:0">
 
                                 <div class="row d-flex ">
 
-                                    @if (p.UnitsInStock <= 0)
+                                    @*@if (p.UnitsInStock <= 0)
                                     {
                                         <div class="col-6">
                                             <button type="button" class="btn btn-primary" disabled>Add to cart</button>
@@ -189,7 +273,7 @@
                                         <div class="col-6">
                                             <button type="button" class="btn btn-primary">Add to cart</button>
                                         </div>
-                                    }
+                                    }*@
 
                                     <div class="col-4 ">
 
@@ -208,10 +292,14 @@
 
                     </div>
                 }
+                }
+
+               
 
                 <div class="col-12">
 
-                    <paging class="pagination" total-records="@Model.totalProducts" show-total-pages="false" show-total-records="true" page-size="@Model.pageSize" page-no="@Model.pageNo">
+                    <paging class="pagination" total-records="@Model.totalProducts" show-total-pages="false" show-total-records="false" page-size="@Model.pageSize" page-no="@Model.pageNo" 
+                    show-page-size-nav="false">
 
                     </paging>
                 </div>
@@ -226,7 +314,108 @@
 
 </section>
 
+<script>
 
+    //category select box
+    var selectElement = document.getElementById("categorySelect");
+    selectElement.addEventListener("change", function () {
+        // Lấy giá trị option đã chọn
+        var selectedValue = selectElement.value;
+
+        // Lưu giá trị vào state storage
+        sessionStorage.setItem("selectedOption", selectedValue);
+    });
+    var selectedOption = sessionStorage.getItem("selectedOption");
+
+    // Nếu có giá trị đã lưu, thiết lập giá trị đó cho option
+    if (selectedOption) {
+        selectElement.value = selectedOption;
+    } 
+
+
+    //suplier select box
+    var selectElementSup = document.getElementById("supplierSelect");
+    selectElementSup.addEventListener("change", function () {
+        // Lấy giá trị option đã chọn
+        var selectedValueSup = selectElementSup.value;
+
+        // Lưu giá trị vào state storage
+        sessionStorage.setItem("selectedOptionSup", selectedValueSup);
+    });
+    var selectedOptionSup = sessionStorage.getItem("selectedOptionSup");
+
+    // Nếu có giá trị đã lưu, thiết lập giá trị đó cho option
+    if (selectedOptionSup) {
+        selectElementSup.value = selectedOptionSup;
+    }
+
+
+    //price select box
+    var selectPriceElement = document.getElementById("priceSelect");
+    selectPriceElement.addEventListener("change", function () {
+        // Lấy giá trị option đã chọn
+        var selectedPriceValue = selectPriceElement.value;
+
+        // Lưu giá trị vào state storage
+        sessionStorage.setItem("selectedPriceOption", selectedPriceValue);
+    });
+    var selectedPriceOption = sessionStorage.getItem("selectedPriceOption");
+
+    // Nếu có giá trị đã lưu, thiết lập giá trị đó cho option
+    if (selectedPriceOption) {
+        selectPriceElement.value = selectedPriceOption;
+    }
+
+
+    //input search
+     var searchElement = document.getElementById("txtSearch");
+    searchElement.addEventListener("change", function () {
+        // Lấy giá trị option đã chọn
+        var selectedSearchValue = searchElement.value;
+
+        // Lưu giá trị vào state storage
+        sessionStorage.setItem("selectedSearchOption", selectedSearchValue);
+    });
+    var selectedSearchOption = sessionStorage.getItem("selectedSearchOption");
+
+    // Nếu có giá trị đã lưu, thiết lập giá trị đó cho option
+    if (selectedSearchOption) {
+        searchElement.value = selectedSearchOption;
+    }
+
+    function filterProducts() {
+        var selectBox = document.getElementById("categorySelect");
+        var selectedValue = selectBox.options[selectBox.selectedIndex].value;
+
+        var selectBoxSup = document.getElementById("supplierSelect");
+        var selectedValueSup = selectBoxSup.options[selectBoxSup.selectedIndex].value;
+
+        var selectBoxPrice = document.getElementById("priceSelect");
+        var selectedValuePrice = selectBoxPrice.options[selectBoxPrice.selectedIndex].value;
+
+        var selectBoxSearch = document.getElementById("txtSearch");
+        var selectedValueSearch = selectBoxSearch.value;
+
+        if (selectedValue !== "" || selectedValueSup !== "" || selectedValuePrice !== "" || selectedValueSearch !== "")
+        {
+            window.location.href = "/Products/List?cateId=" + selectedValue + "&supId=" + selectedValueSup + "&price=" + selectedValuePrice + "&search=" + selectedValueSearch;
+        }
+        //if (selectedValue !== "" && selectedValueSup == "") {
+        //    window.location.href = "/Products/List?cateId=" + selectedValue;
+        //} else if (selectedValue == "" && selectedValueSup !== "") {
+        //    window.location.href = "/Products/List?supId=" + selectedValueSup;
+        //} else if (selectedValue !== "" && selectedValueSup !== "") {
+        //    window.location.href = "/Products/List?cateId=?supId=" + selectedValue ,selectedValueSup;
+        //}
+    }
+
+    var button = document.getElementById("btnSearch");
+    button.addEventListener("click", filterProducts);
+
+   
+    
+
+</script>
 
 
 

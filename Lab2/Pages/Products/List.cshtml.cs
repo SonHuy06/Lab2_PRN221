@@ -1,4 +1,5 @@
 using Lab2.Business.IRepository;
+using Lab2.Business.DTO;
 using Lab2.DataAccess.Managers;
 using Lab2.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,12 +10,15 @@ namespace Lab2.Pages.Products
     public class ListModel : PageModel
     {
         IProductRepository _productRepository;
-        public List<Product> allProducts { get; set; }
-        public List<Product> productsPaging { get; set; }
-        public List<Product> productsGroupByCateID { get; set; }
-        public List<Product> productsGroupBySupID { get; set; }
+        public List<ProductDTO> allProducts { get; set; }
+        public List<ProductDTO> productsPaging { get; set; }
+        public List<ProductDTO> productsGroupByCateID { get; set; }
+        public List<ProductDTO> productsGroupBySupID { get; set; }
+        public int SelectedCategoryId { get; set; }
         public int? CateID { get; set; }
-        public int SupID { get; set; }
+        public int? SupID { get; set; }
+
+       
 
         public int pageNo { get; set; }
         public int pageSize { get; set; }
@@ -30,8 +34,7 @@ namespace Lab2.Pages.Products
         private void GetData(int p, int s)
         {
 
-            productsPaging = _productRepository.getListProduct(p, s);
-            totalProducts = _productRepository.getListProduct().Count;
+
         }
 
         public void onPost()
@@ -40,24 +43,21 @@ namespace Lab2.Pages.Products
 
         }
 
-        public void OnGet(int p = 1, int s = 3, int? cateID = null, int? supID = null)
+        public void OnGet(int p = 1, int s = 9, int? cateID = null, int? supID = null, string? price = null, string? search = "")
         {
 
-            if (cateID.HasValue)
+            if (cateID.HasValue || supID.HasValue || !String.IsNullOrEmpty(price) || !String.IsNullOrEmpty(search))
             {
-                productsPaging = _productRepository.getListProductByCateID(p, s, (int)cateID);
-                totalProducts = _productRepository.getTotalProductByCateID((int)cateID).Count;
-                CateID = cateID.Value;
-            }
-            else if (supID.HasValue)
-            {
-                productsPaging = _productRepository.getListProductBySupID(p, s, (int)supID);
-                totalProducts = _productRepository.getTotalProductBySupID((int)supID).Count;
-                SupID = supID.Value;
+                productsPaging = _productRepository.searchProduct(p, s, (int?)supID, (int?)cateID, price, search);
+                totalProducts = _productRepository.getTotalsearchProduct((int?)supID, (int?)cateID, price, search).Count;
+                
 
             }
 
-            if (!cateID.HasValue && !supID.HasValue)
+
+           
+
+            if (!cateID.HasValue && !supID.HasValue && String.IsNullOrEmpty(price) && String.IsNullOrEmpty(search))
             {
                 productsPaging = _productRepository.getListProduct(p, s);
                 totalProducts = _productRepository.getListProduct().Count;

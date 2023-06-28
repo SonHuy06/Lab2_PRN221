@@ -382,3 +382,7 @@ D:\Document\Documents\PRN221\Lab2\Lab2\bin\Debug\net6.0\runtimes\win\lib\netcore
 D:\Document\Documents\PRN221\Lab2\Lab2\obj\Debug\net6.0\Lab2.MvcApplicationPartsAssemblyInfo.cs
 D:\Document\Documents\PRN221\Lab2\Lab2\obj\Debug\net6.0\Lab2.csproj.CopyComplete
 D:\Document\Documents\PRN221\Lab2\Lab2\bin\Debug\net6.0\LazZiya.TagHelpers.dll
+D:\Document\Documents\PRN221\Lab2\Lab2\bin\Debug\net6.0\libman.json
+D:\Document\Documents\PRN221\Lab2\Lab2\bin\Debug\net6.0\AutoMapper.dll
+D:\Document\Documents\PRN221\Lab2\Lab2\bin\Debug\net6.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+D:\Document\Documents\PRN221\Lab2\Lab2\bin\Debug\net6.0\Newtonsoft.Json.dll

@@ -1,0 +1,259 @@
+﻿@page "/Cart"
+@using Lab2.Business.DTO
+@{
+    Layout = null;
+}
+@model Lab2.Pages.Carts.CartModel
+@{
+    decimal totalPrice = (decimal)Model.cartList.Sum(item => item.ProductItem.UnitPrice * item.Quantity);
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/Lab2.styles.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        position: relative;
+    }
+
+    .container {
+        margin: 0 5%;
+    }
+
+    .wrap-nav {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .nav-item-cart {
+        text-decoration: none;
+        color: dodgerblue;
+        font-size: 20px;
+        margin: 0 10px;
+    }
+
+        .nav-item-cart:hover {
+            cursor: pointer;
+            color: deepskyblue;
+        }
+
+    h1 {
+        color: #FF8400;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    th {
+        background-color: #FF8400;
+        color: white;
+    }
+
+    tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .btn-delete-from-cart, .btn-buy {
+        padding: 10px 20px;
+        background: #ffffff;
+        outline: none;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+
+    .btn-delete-from-cart {
+        color: red;
+        border: 1px solid red;
+    }
+
+        .btn-delete-from-cart:hover {
+            background: red;
+            color: #fff;
+            border: 1px solid red;
+            outline: none;
+        }
+
+    .btn-buy {
+        color: #FF8400;
+        border: 1px solid #FF8400;
+        font-size: 19px;
+    }
+
+        .btn-buy:hover {
+            background: #FF8400;
+            color: #fff;
+            border: 1px solid #FF8400;
+            outline: none;
+        }
+
+    .wrap-total-money-buy {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 23px;
+        margin-top: 20px
+    }
+
+    .text-total {
+        font-weight: bold;
+        color: #000000;
+    }
+
+    .text-total-value {
+        font-weight: bold;
+        color: red;
+    }
+
+    .text-empty-cart {
+        text-align: center;
+        font-size: 25px;
+        margin-top: 30px;
+    }
+
+    .wrap-notification {
+        padding: 10px 20px;
+        position: fixed;
+        top: 30px;
+        right: 0;
+        background: lightGreen;
+        border-radius: 5px;
+        display: none;
+    }
+
+        .wrap-notification div {
+            color: #ffffff;
+            font-size: 18px;
+            text-align: left;
+        }
+
+    .active {
+        display: block;
+    }
+</style>
+
+<div class="container">
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3 " style="height:60px">
+            <div class="container-fluid">
+
+                <div class="row w-100 mt-3">
+
+                    <div class="col-4">
+
+                        <div class="row pt-1    ">
+                            <a class="navbar-brand col-3" asp-area="" asp-page="">Food Store</a>
+
+                            <div class="nav-item align-items-start col-2 mt-1 ">
+                                <a class="nav-link text-dark " asp-area="" asp-page="/Products/List">
+                                    <i class="fa-solid fa-house"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-3"></div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="col-5 ">
+                    </div>
+
+                   
+
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <h1>Cart List</h1>
+
+    @*check if cart list is not empty*@
+    @if (Model.cartList.Count > 0)
+    {
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Quantity per unit</th>
+                <th>Unit price</th>
+                <th>Unit in stock</th>
+                <th>Quantity</th>
+                <th>Action</th>
+            </tr>
+            @foreach (CartItem item in Model.cartList)
+            {
+                <tr>
+                    <td>@item.ProductItem.ProductId</td>
+                    <td>@item.ProductItem.ProductName</td>
+                    <td>@item.ProductItem.Category.CategoryName</td>
+                    <td>@item.ProductItem.QuantityPerUnit</td>
+                    <td>@item.ProductItem.UnitPrice</td>
+                    <td>@item.ProductItem.UnitsInStock</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        <form asp-page="Cart" asp-page-handler="deleteProductFromCart" asp-route-productId="@item.ProductItem.ProductId"
+                      onsubmit="return confirm('Are you sure you want to delete this item?');">
+                            <button class="btn-delete-from-cart" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="wrap-total-money-buy">
+            <div class="wrap-total-money">
+                <span class="text-total">Total:</span>&ensp;
+                <span class="text-total-value">@totalPrice</span>
+            </div>
+            <button class="btn-buy" type="button">Buy</button>
+        </div>
+    }
+    else
+    {
+        <div class="text-empty-cart">The cart list is empty</div>
+    }
+
+    @if (TempData.ContainsKey("message"))
+    {
+        <div class="wrap-notification">
+            <div>@TempData["message"]</div>
+        </div>
+    }
+</div>
+
+@if (TempData.ContainsKey("message"))
+{
+    <script>
+        @*get element*@
+                        const notification = document.querySelector(".wrap-notification");
+
+        @*add class*@
+            notification.classList.add("active");
+
+        @*remove class after 1s*@
+            setTimeout(() => {
+                notification.classList.remove("active");
+            }, 1000);
+    </script>
+}
